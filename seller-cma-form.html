@@ -1,0 +1,262 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Free Home Value (CMA) Request</title>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Young+Serif&family=Public+Sans:wght@400;500;600&display=swap">
+<style>
+/* Layout: one centered column of numbered form sections, a slim header band, confirmation replaces the form on submit */
+:root{
+  --bg:#f3f5f2; --surface:#ffffff; --ink:#1d2621; --muted:#5d6a62; --line:#d6ddd7;
+  --accent:#24533f; --accent-ink:#ffffff; --brass:#9a7a3c; --error:#a23a2a; --focus:#3b7d61;
+  --display:"Young Serif", Georgia, serif;
+  --body:"Public Sans", system-ui, -apple-system, "Segoe UI", sans-serif;
+}
+@media (prefers-color-scheme: dark){:root:not([data-theme="light"]){
+  --bg:#121815; --surface:#1a221e; --ink:#e6ece8; --muted:#9aa8a0; --line:#2e3a34;
+  --accent:#7fc3a2; --accent-ink:#0f1a15; --brass:#d2b06a; --error:#f08a78; --focus:#9fd8bb; color-scheme:dark}}
+:root[data-theme="dark"]{
+  --bg:#121815; --surface:#1a221e; --ink:#e6ece8; --muted:#9aa8a0; --line:#2e3a34;
+  --accent:#7fc3a2; --accent-ink:#0f1a15; --brass:#d2b06a; --error:#f08a78; --focus:#9fd8bb; color-scheme:dark}
+*{box-sizing:border-box}
+body{background:var(--bg);color:var(--ink);font-family:var(--body);font-size:15px;line-height:1.5;margin:0}
+.wrap{max-width:720px;margin:0 auto;padding-block:32px 56px;padding-left:max(16px,env(safe-area-inset-left,0px));padding-right:max(16px,env(safe-area-inset-right,0px))}
+header{display:grid;gap:8px;margin-bottom:28px}
+.eyebrow{font-size:12px;letter-spacing:.12em;text-transform:uppercase;color:var(--brass);font-weight:600}
+h1{font-family:var(--display);font-weight:400;font-size:clamp(28px,6vw,40px);line-height:1.1;margin:0;text-wrap:balance}
+.lede{color:var(--muted);margin:0;max-width:60ch}
+form{display:grid;gap:20px}
+fieldset{border:1px solid var(--line);background:var(--surface);border-radius:10px;margin:0;padding:20px;display:grid;gap:16px;min-width:0}
+legend{font-family:var(--display);font-size:20px;padding:0 6px;display:flex;gap:10px;align-items:baseline}
+legend span{font-family:var(--body);font-size:12px;color:var(--brass);font-weight:600;letter-spacing:.08em}
+.row{display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:14px}
+.field{display:grid;gap:6px;min-width:0}
+label,.label{font-weight:500;font-size:14px}
+.req{color:var(--error)}
+.hint{color:var(--muted);font-size:13px}
+input[type=text],input[type=email],input[type=tel],input[type=url],input[type=date],select,textarea{
+  width:100%;font:inherit;color:var(--ink);background:var(--bg);border:1px solid var(--line);border-radius:6px;padding:10px 12px}
+textarea{min-height:96px;resize:vertical}
+input:focus-visible,select:focus-visible,textarea:focus-visible,button:focus-visible,.choice input:focus-visible{outline:2px solid var(--focus);outline-offset:2px}
+.money{position:relative}
+.money::before{content:"$";position:absolute;left:12px;top:50%;transform:translateY(-50%);color:var(--muted)}
+.money input{padding-left:24px;font-variant-numeric:tabular-nums}
+.choices{display:flex;flex-wrap:wrap;gap:8px}
+.choice{display:flex;align-items:center;gap:8px;border:1px solid var(--line);border-radius:999px;padding:7px 14px;cursor:pointer;background:var(--bg)}
+.choice:has(input:checked){border-color:var(--accent);box-shadow:inset 0 0 0 1px var(--accent)}
+.choice input{accent-color:var(--accent);margin:0}
+.consent{display:flex;gap:10px;align-items:flex-start}
+.consent input{accent-color:var(--accent);margin-top:4px}
+.actions{display:flex;flex-wrap:wrap;gap:12px;align-items:center}
+button{font:inherit;font-weight:600;border:0;border-radius:6px;padding:12px 22px;cursor:pointer;background:var(--accent);color:var(--accent-ink)}
+button[disabled]{opacity:.6;cursor:wait}
+.err{color:var(--error);font-size:14px}
+.invalid{border-color:var(--error)!important}
+.done{background:var(--surface);border:1px solid var(--line);border-radius:10px;padding:28px;display:grid;gap:12px}
+.done h2{font-family:var(--display);font-weight:400;font-size:28px;margin:0}
+.summary{display:grid;grid-template-columns:max-content 1fr;gap:6px 16px;font-size:14px;margin:8px 0 0}
+.summary dt{color:var(--muted)} .summary dd{margin:0;min-width:0;overflow-wrap:anywhere}
+footer{margin-top:28px;color:var(--muted);font-size:13px;display:grid;gap:2px}
+@media (prefers-reduced-motion:no-preference){.done{animation:rise .35s ease-out}@keyframes rise{from{transform:translateY(8px)}to{transform:none}}}
+</style>
+</head>
+<body>
+<div class="wrap">
+  <header>
+    <div class="eyebrow">Dream Team Homes · Amplify Real Estate Services</div>
+    <h1>What's your home worth today?</h1>
+    <p class="lede">Request a free Comparative Market Analysis (CMA). I'll compare your home with recent sales nearby and send you a realistic price range, with no obligation to list.</p>
+  </header>
+
+  <form id="cmaForm" novalidate>
+    <fieldset>
+      <legend><span>1</span>About you</legend>
+      <div class="row">
+        <div class="field"><label for="name">Full name <span class="req">*</span></label><input id="name" name="name" type="text" autocomplete="name" required></div>
+        <div class="field"><label for="coOwner">Co-owner name</label><input id="coOwner" name="coOwner" type="text" placeholder="If someone else is on title"></div>
+      </div>
+      <div class="row">
+        <div class="field"><label for="email">Email <span class="req">*</span></label><input id="email" name="email" type="email" autocomplete="email" required></div>
+        <div class="field"><label for="phone">Phone <span class="req">*</span></label><input id="phone" name="phone" type="tel" autocomplete="tel" required></div>
+      </div>
+      <div class="field">
+        <span class="label">Best way to reach you</span>
+        <div class="choices">
+          <label class="choice"><input id="ct-text" type="radio" name="contactPref" value="Text" checked> Text</label>
+          <label class="choice"><input id="ct-call" type="radio" name="contactPref" value="Call"> Call</label>
+          <label class="choice"><input id="ct-email" type="radio" name="contactPref" value="Email"> Email</label>
+        </div>
+      </div>
+    </fieldset>
+
+    <fieldset>
+      <legend><span>2</span>Your property</legend>
+      <div class="field"><label for="address">Street address <span class="req">*</span></label><input id="address" name="address" type="text" autocomplete="street-address" placeholder="1234 W Example Ave" required></div>
+      <div class="row">
+        <div class="field"><label for="city">City <span class="req">*</span></label><input id="city" name="city" type="text" value="Spokane" required></div>
+        <div class="field"><label for="state">State</label><input id="state" name="state" type="text" value="WA"></div>
+        <div class="field"><label for="zip">ZIP</label><input id="zip" name="zip" type="text" inputmode="numeric" maxlength="10"></div>
+      </div>
+      <div class="row">
+        <div class="field"><label for="propType">Property type</label>
+          <select id="propType" name="propType"><option>Single-family home</option><option>Townhouse</option><option>Condo</option><option>Manufactured home</option><option>Multi-family (2–4 units)</option><option>Land</option></select></div>
+        <div class="field"><label for="yearBuilt">Year built</label><input id="yearBuilt" name="yearBuilt" type="text" inputmode="numeric" maxlength="4" placeholder="e.g. 1978"></div>
+      </div>
+      <div class="row">
+        <div class="field"><label for="beds">Bedrooms</label><input id="beds" name="beds" type="text" inputmode="numeric"></div>
+        <div class="field"><label for="baths">Bathrooms</label><input id="baths" name="baths" type="text" inputmode="decimal" placeholder="e.g. 2.5"></div>
+        <div class="field"><label for="sqft">Square feet</label><input id="sqft" name="sqft" type="text" inputmode="numeric" placeholder="Approximate is fine"></div>
+      </div>
+      <div class="row">
+        <div class="field"><label for="lot">Lot size</label><input id="lot" name="lot" type="text" placeholder="e.g. 0.25 acre"></div>
+        <div class="field"><label for="garage">Garage / parking</label>
+          <select id="garage" name="garage"><option>2-car garage</option><option>1-car garage</option><option>3+ car garage</option><option>Carport</option><option>Off-street only</option><option>None</option></select></div>
+      </div>
+      <div class="field"><label for="basement">Basement</label>
+        <select id="basement" name="basement"><option>Finished</option><option>Partially finished</option><option>Unfinished</option><option>None</option></select></div>
+    </fieldset>
+
+    <fieldset>
+      <legend><span>3</span>Condition &amp; updates</legend>
+      <div class="field">
+        <span class="label">Overall condition</span>
+        <div class="choices">
+          <label class="choice"><input id="cond-move" type="radio" name="condition" value="Move-in ready" checked> Move-in ready</label>
+          <label class="choice"><input id="cond-minor" type="radio" name="condition" value="Needs minor updates"> Needs minor updates</label>
+          <label class="choice"><input id="cond-major" type="radio" name="condition" value="Needs major work"> Needs major work</label>
+        </div>
+      </div>
+      <div class="field">
+        <span class="label">Updated in the last 10 years</span>
+        <div class="choices">
+          <label class="choice"><input id="u-kitchen" type="checkbox" name="updates" value="Kitchen"> Kitchen</label>
+          <label class="choice"><input id="u-baths" type="checkbox" name="updates" value="Bathrooms"> Bathrooms</label>
+          <label class="choice"><input id="u-roof" type="checkbox" name="updates" value="Roof"> Roof</label>
+          <label class="choice"><input id="u-hvac" type="checkbox" name="updates" value="Furnace / AC"> Furnace / AC</label>
+          <label class="choice"><input id="u-windows" type="checkbox" name="updates" value="Windows"> Windows</label>
+          <label class="choice"><input id="u-floors" type="checkbox" name="updates" value="Flooring"> Flooring</label>
+          <label class="choice"><input id="u-paint" type="checkbox" name="updates" value="Paint"> Paint</label>
+          <label class="choice"><input id="u-wh" type="checkbox" name="updates" value="Water heater"> Water heater</label>
+        </div>
+      </div>
+      <div class="field"><label for="features">Special features</label><textarea id="features" name="features" placeholder="Shop, ADU, deck, fenced yard, view, solar, recent additions…"></textarea></div>
+    </fieldset>
+
+    <fieldset>
+      <legend><span>4</span>Your plans</legend>
+      <div class="row">
+        <div class="field"><label for="timeline">When are you thinking of selling?</label>
+          <select id="timeline" name="timeline"><option>As soon as possible</option><option>1–3 months</option><option selected>3–6 months</option><option>6–12 months</option><option>Just curious about value</option></select></div>
+        <div class="field"><label for="occupancy">Who lives there now?</label>
+          <select id="occupancy" name="occupancy"><option>I do</option><option>Tenants</option><option>Vacant</option></select></div>
+      </div>
+      <div class="field"><label for="hopePrice">Price you have in mind</label><div class="money"><input id="hopePrice" name="hopePrice" type="text" inputmode="numeric"></div><span class="hint">Optional. Helps me see how the market lines up with your expectations.</span></div>
+      <div class="field">
+        <span class="label">Will you also be buying a home?</span>
+        <div class="choices">
+          <label class="choice"><input id="buy-yes" type="radio" name="alsoBuying" value="Yes, in this area"> Yes, in this area</label>
+          <label class="choice"><input id="buy-away" type="radio" name="alsoBuying" value="Yes, moving away"> Yes, moving away</label>
+          <label class="choice"><input id="buy-no" type="radio" name="alsoBuying" value="No" checked> No</label>
+        </div>
+      </div>
+      <div class="field">
+        <span class="label">Is the home listed with another agent right now?</span>
+        <div class="choices">
+          <label class="choice"><input id="ag-no" type="radio" name="listedNow" value="No" checked> No</label>
+          <label class="choice"><input id="ag-yes" type="radio" name="listedNow" value="Yes"> Yes</label>
+        </div>
+      </div>
+      <div class="field"><label for="notes">Questions or anything else I should know</label><textarea id="notes" name="notes"></textarea></div>
+      <label class="consent" for="consent"><input id="consent" name="consent" type="checkbox" required> <span>I agree to be contacted about my home's value by text, call, or email. <span class="req">*</span></span></label>
+    </fieldset>
+
+    <div class="actions">
+      <button id="submitBtn" type="submit">Request my free CMA</button>
+      <span id="formErr" class="err" role="alert"></span>
+    </div>
+  </form>
+
+  <section id="done" class="done" hidden aria-live="polite">
+    <div class="eyebrow">Received</div>
+    <h2>Thanks! Your CMA request is in.</h2>
+    <p class="lede">I'll pull recent sales near you and reach out within one business day. I may ask to walk through the home so the price range is as accurate as possible.</p>
+    <dl id="summary" class="summary"></dl>
+  </section>
+
+  <footer>
+    <strong>Vienna Sprenkel, Realtor</strong>
+    <span>Dream Team Homes · Amplify Real Estate Services</span>
+    <span>1311 N Washington St, Ste A, Spokane, WA 99201 · vienna2homes.com</span>
+  </footer>
+</div>
+
+<script>
+const FORM_ENDPOINT = "https://formsubmit.co/ajax/viennasprenkel@hotmail.com";
+
+const form = document.getElementById("cmaForm");
+const errEl = document.getElementById("formErr");
+const btn = document.getElementById("submitBtn");
+
+function collect(){
+  const fd = new FormData(form), data = {};
+  for (const [k,v] of fd.entries()){
+    if (data[k]) data[k] = [].concat(data[k], v); else data[k] = v;
+  }
+  if (Array.isArray(data.updates)) data.updates = data.updates.join(", ");
+  data.consent = form.consent.checked ? "Yes" : "No";
+  data._template = "table";
+  data._cc = "vienna.sprenkel@dreamteam.homes";
+  data._replyto = data.email || "";
+  data._subject = "CMA request: " + (data.address || "property") + " — " + (data.name || "");
+  return data;
+}
+
+const LABELS = {name:"Owner",coOwner:"Co-owner",email:"Email",phone:"Phone",contactPref:"Contact by",address:"Address",city:"City",zip:"ZIP",propType:"Type",yearBuilt:"Year built",beds:"Beds",baths:"Baths",sqft:"Sq ft",lot:"Lot",garage:"Parking",basement:"Basement",condition:"Condition",updates:"Updates",features:"Features",timeline:"Timeline",occupancy:"Occupied by",hopePrice:"Price in mind",alsoBuying:"Also buying",listedNow:"Listed now",notes:"Notes"};
+
+function showDone(data){
+  const dl = document.getElementById("summary");
+  dl.replaceChildren();
+  for (const k in LABELS){
+    let v = data[k]; if (!v) continue;
+    if (k === "hopePrice") v = "$" + v;
+    const dt = document.createElement("dt"); dt.textContent = LABELS[k];
+    const dd = document.createElement("dd"); dd.textContent = v;
+    dl.append(dt, dd);
+  }
+  form.hidden = true;
+  document.getElementById("done").hidden = false;
+  document.getElementById("done").scrollIntoView({behavior:"smooth",block:"start"});
+}
+
+form.addEventListener("submit", async (e) => {
+  e.preventDefault();
+  errEl.textContent = "";
+  let firstBad = null;
+  form.querySelectorAll("[required]").forEach(el => {
+    const bad = el.type === "checkbox" ? !el.checked : !el.value.trim() || !el.checkValidity();
+    el.classList.toggle("invalid", bad);
+    if (bad && !firstBad) firstBad = el;
+  });
+  if (firstBad){
+    errEl.textContent = "Please fill in the highlighted fields.";
+    firstBad.focus();
+    return;
+  }
+  const data = collect();
+  btn.disabled = true; btn.textContent = "Sending…";
+  try{
+    const res = await fetch(FORM_ENDPOINT, {method:"POST", headers:{"Content-Type":"application/json","Accept":"application/json"}, body:JSON.stringify(data)});
+    if (!res.ok) throw new Error(res.status);
+    showDone(data);
+  }catch(err){
+    errEl.textContent = "That didn't go through. Check your connection and try again, or call or text Vienna directly.";
+  }finally{
+    btn.disabled = false; btn.textContent = "Request my free CMA";
+  }
+});
+
+form.addEventListener("input", e => e.target.classList.remove("invalid"));
+</script>
+</body>
+</html>
