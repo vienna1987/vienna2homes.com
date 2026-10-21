@@ -1,0 +1,266 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Home Buyer Intake</title>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Young+Serif&family=Public+Sans:wght@400;500;600&display=swap">
+<style>
+/* Layout: one centered column of numbered form sections, a slim header band, confirmation replaces the form on submit */
+:root{
+  --bg:#f3f5f2; --surface:#ffffff; --ink:#1d2621; --muted:#5d6a62; --line:#d6ddd7;
+  --accent:#24533f; --accent-ink:#ffffff; --brass:#9a7a3c; --error:#a23a2a; --focus:#3b7d61;
+  --display:"Young Serif", Georgia, serif;
+  --body:"Public Sans", system-ui, -apple-system, "Segoe UI", sans-serif;
+}
+@media (prefers-color-scheme: dark){:root:not([data-theme="light"]){
+  --bg:#121815; --surface:#1a221e; --ink:#e6ece8; --muted:#9aa8a0; --line:#2e3a34;
+  --accent:#7fc3a2; --accent-ink:#0f1a15; --brass:#d2b06a; --error:#f08a78; --focus:#9fd8bb; color-scheme:dark}}
+:root[data-theme="dark"]{
+  --bg:#121815; --surface:#1a221e; --ink:#e6ece8; --muted:#9aa8a0; --line:#2e3a34;
+  --accent:#7fc3a2; --accent-ink:#0f1a15; --brass:#d2b06a; --error:#f08a78; --focus:#9fd8bb; color-scheme:dark}
+*{box-sizing:border-box}
+body{background:var(--bg);color:var(--ink);font-family:var(--body);font-size:15px;line-height:1.5;margin:0}
+.wrap{max-width:720px;margin:0 auto;padding-block:32px 56px;padding-left:max(16px,env(safe-area-inset-left,0px));padding-right:max(16px,env(safe-area-inset-right,0px))}
+header{display:grid;gap:8px;margin-bottom:28px}
+.eyebrow{font-size:12px;letter-spacing:.12em;text-transform:uppercase;color:var(--brass);font-weight:600}
+h1{font-family:var(--display);font-weight:400;font-size:clamp(28px,6vw,40px);line-height:1.1;margin:0;text-wrap:balance}
+.lede{color:var(--muted);margin:0;max-width:60ch}
+form{display:grid;gap:20px}
+fieldset{border:1px solid var(--line);background:var(--surface);border-radius:10px;margin:0;padding:20px;display:grid;gap:16px;min-width:0}
+legend{font-family:var(--display);font-size:20px;padding:0 6px;display:flex;gap:10px;align-items:baseline}
+legend span{font-family:var(--body);font-size:12px;color:var(--brass);font-weight:600;letter-spacing:.08em}
+.row{display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:14px}
+.field{display:grid;gap:6px;min-width:0}
+label,.label{font-weight:500;font-size:14px}
+.req{color:var(--error)}
+.hint{color:var(--muted);font-size:13px}
+input[type=text],input[type=email],input[type=tel],input[type=url],input[type=date],select,textarea{
+  width:100%;font:inherit;color:var(--ink);background:var(--bg);border:1px solid var(--line);border-radius:6px;padding:10px 12px}
+textarea{min-height:96px;resize:vertical}
+input:focus-visible,select:focus-visible,textarea:focus-visible,button:focus-visible,.choice input:focus-visible{outline:2px solid var(--focus);outline-offset:2px}
+.money{position:relative}
+.money::before{content:"$";position:absolute;left:12px;top:50%;transform:translateY(-50%);color:var(--muted)}
+.money input{padding-left:24px;font-variant-numeric:tabular-nums}
+.choices{display:flex;flex-wrap:wrap;gap:8px}
+.choice{display:flex;align-items:center;gap:8px;border:1px solid var(--line);border-radius:999px;padding:7px 14px;cursor:pointer;background:var(--bg)}
+.choice:has(input:checked){border-color:var(--accent);box-shadow:inset 0 0 0 1px var(--accent)}
+.choice input{accent-color:var(--accent);margin:0}
+.consent{display:flex;gap:10px;align-items:flex-start}
+.consent input{accent-color:var(--accent);margin-top:4px}
+.actions{display:flex;flex-wrap:wrap;gap:12px;align-items:center}
+button{font:inherit;font-weight:600;border:0;border-radius:6px;padding:12px 22px;cursor:pointer;background:var(--accent);color:var(--accent-ink)}
+button[disabled]{opacity:.6;cursor:wait}
+.err{color:var(--error);font-size:14px}
+.invalid{border-color:var(--error)!important}
+.done{background:var(--surface);border:1px solid var(--line);border-radius:10px;padding:28px;display:grid;gap:12px}
+.done h2{font-family:var(--display);font-weight:400;font-size:28px;margin:0}
+.summary{display:grid;grid-template-columns:max-content 1fr;gap:6px 16px;font-size:14px;margin:8px 0 0}
+.summary dt{color:var(--muted)} .summary dd{margin:0;min-width:0;overflow-wrap:anywhere}
+footer{margin-top:28px;color:var(--muted);font-size:13px;display:grid;gap:2px}
+@media (prefers-reduced-motion:no-preference){.done{animation:rise .35s ease-out}@keyframes rise{from{transform:translateY(8px)}to{transform:none}}}
+</style>
+</head>
+<body>
+
+<div class="wrap">
+  <header>
+    <div class="eyebrow">Dream Team Homes · Amplify Real Estate Services</div>
+    <h1>Found the one? Tell me about it.</h1>
+    <p class="lede">Share the home you want and how you'd like to buy it. I'll review the details, pull the comps, and reach out to talk through your offer.</p>
+  </header>
+
+  <form id="buyerForm" novalidate>
+    <fieldset>
+      <legend><span>1</span>About you</legend>
+      <div class="row">
+        <div class="field"><label for="name">Full name <span class="req">*</span></label><input id="name" name="name" type="text" autocomplete="name" required></div>
+        <div class="field"><label for="coBuyer">Co-buyer name</label><input id="coBuyer" name="coBuyer" type="text" placeholder="If buying with someone"></div>
+      </div>
+      <div class="row">
+        <div class="field"><label for="email">Email <span class="req">*</span></label><input id="email" name="email" type="email" autocomplete="email" required></div>
+        <div class="field"><label for="phone">Phone <span class="req">*</span></label><input id="phone" name="phone" type="tel" autocomplete="tel" required></div>
+      </div>
+      <div class="field">
+        <span class="label">Best way to reach you</span>
+        <div class="choices">
+          <label class="choice"><input id="ct-text" type="radio" name="contactPref" value="Text" checked> Text</label>
+          <label class="choice"><input id="ct-call" type="radio" name="contactPref" value="Call"> Call</label>
+          <label class="choice"><input id="ct-email" type="radio" name="contactPref" value="Email"> Email</label>
+        </div>
+      </div>
+    </fieldset>
+
+    <fieldset>
+      <legend><span>2</span>The home</legend>
+      <div class="field"><label for="address">Street address <span class="req">*</span></label><input id="address" name="address" type="text" placeholder="1234 W Example Ave" required></div>
+      <div class="row">
+        <div class="field"><label for="city">City <span class="req">*</span></label><input id="city" name="city" type="text" value="Spokane" required></div>
+        <div class="field"><label for="state">State</label><input id="state" name="state" type="text" value="WA"></div>
+        <div class="field"><label for="zip">ZIP</label><input id="zip" name="zip" type="text" inputmode="numeric" maxlength="10"></div>
+      </div>
+      <div class="row">
+        <div class="field"><label for="mls">MLS #</label><input id="mls" name="mls" type="text" placeholder="From the listing, if you have it"></div>
+        <div class="field"><label for="listPrice">List price</label><div class="money"><input id="listPrice" name="listPrice" type="text" inputmode="numeric"></div></div>
+      </div>
+      <div class="field"><label for="link">Listing link</label><input id="link" name="link" type="url" placeholder="Zillow, Redfin, or MLS link"></div>
+      <div class="field">
+        <span class="label">Have you seen it in person?</span>
+        <div class="choices">
+          <label class="choice"><input id="seen-yes" type="radio" name="seen" value="Yes"> Yes</label>
+          <label class="choice"><input id="seen-no" type="radio" name="seen" value="No, I'd like a showing" checked> No, I'd like a showing</label>
+        </div>
+      </div>
+    </fieldset>
+
+    <fieldset>
+      <legend><span>3</span>Your offer</legend>
+      <div class="row">
+        <div class="field"><label for="offer">Offer price you have in mind</label><div class="money"><input id="offer" name="offer" type="text" inputmode="numeric"></div><span class="hint">A starting point. We'll check it against comps together.</span></div>
+        <div class="field"><label for="earnest">Earnest money</label><div class="money"><input id="earnest" name="earnest" type="text" inputmode="numeric"></div></div>
+      </div>
+      <div class="row">
+        <div class="field"><label for="closing">Ideal closing date</label><input id="closing" name="closing" type="date"></div>
+        <div class="field"><label for="timeline">How soon do you need to move?</label>
+          <select id="timeline" name="timeline"><option>Within 30 days</option><option selected>30–60 days</option><option>60–90 days</option><option>Flexible</option></select></div>
+      </div>
+      <div class="field">
+        <span class="label">Contingencies you want</span>
+        <div class="choices">
+          <label class="choice"><input id="c-insp" type="checkbox" name="contingencies" value="Inspection" checked> Inspection</label>
+          <label class="choice"><input id="c-appr" type="checkbox" name="contingencies" value="Appraisal" checked> Appraisal</label>
+          <label class="choice"><input id="c-fin" type="checkbox" name="contingencies" value="Financing" checked> Financing</label>
+          <label class="choice"><input id="c-sale" type="checkbox" name="contingencies" value="Sale of my current home"> Sale of my current home</label>
+        </div>
+      </div>
+    </fieldset>
+
+    <fieldset>
+      <legend><span>4</span>Financing</legend>
+      <div class="row">
+        <div class="field"><label for="loanType">How are you paying?</label>
+          <select id="loanType" name="loanType"><option>Conventional loan</option><option>FHA loan</option><option>VA loan</option><option>USDA loan</option><option>Cash</option><option>Not sure yet</option></select></div>
+        <div class="field"><label for="down">Down payment</label>
+          <select id="down" name="down"><option>Not sure</option><option>0–3.5%</option><option>5–10%</option><option>10–20%</option><option>20%+</option></select></div>
+      </div>
+      <div class="field">
+        <span class="label">Are you pre-approved?</span>
+        <div class="choices">
+          <label class="choice"><input id="pre-yes" type="radio" name="preapproved" value="Yes"> Yes</label>
+          <label class="choice"><input id="pre-prog" type="radio" name="preapproved" value="In progress"> In progress</label>
+          <label class="choice"><input id="pre-no" type="radio" name="preapproved" value="Not yet" checked> Not yet</label>
+        </div>
+      </div>
+      <div class="field"><label for="lender">Lender name</label><input id="lender" name="lender" type="text" placeholder="If you have one"></div>
+    </fieldset>
+
+    <fieldset>
+      <legend><span>5</span>Anything else</legend>
+      <div class="field">
+        <span class="label">Are you working with another agent?</span>
+        <div class="choices">
+          <label class="choice"><input id="ag-no" type="radio" name="otherAgent" value="No" checked> No</label>
+          <label class="choice"><input id="ag-yes" type="radio" name="otherAgent" value="Yes"> Yes</label>
+        </div>
+      </div>
+      <div class="field"><label for="notes">Questions or must-haves</label><textarea id="notes" name="notes" placeholder="Repairs you noticed, things you love about it, questions about the neighborhood…"></textarea></div>
+      <label class="consent" for="consent"><input id="consent" name="consent" type="checkbox" required> <span>I agree to be contacted about this home by text, call, or email. <span class="req">*</span></span></label>
+    </fieldset>
+
+    <div class="actions">
+      <button id="submitBtn" type="submit">Send to Vienna</button>
+      <span id="formErr" class="err" role="alert"></span>
+    </div>
+  </form>
+
+  <section id="done" class="done" hidden aria-live="polite">
+    <div class="eyebrow">Received</div>
+    <h2 id="doneTitle">Thanks! I've got your details.</h2>
+    <p id="doneMsg" class="lede">I'll review this home and reach out within one business day.</p>
+    <dl id="summary" class="summary"></dl>
+  </section>
+
+  <footer>
+    <strong>Vienna Sprenkel, Realtor</strong>
+    <span>Dream Team Homes · Amplify Real Estate Services</span>
+    <span>1311 N Washington St, Ste A, Spokane, WA 99201 · vienna2homes.com</span>
+  </footer>
+</div>
+
+<script>
+/* Paste your form endpoint here (for example a Formspree URL like https://formspree.io/f/abcdwxyz).
+   Leave it empty to run in preview mode, which shows the summary without sending anything. */
+const FORM_ENDPOINT = "https://formsubmit.co/ajax/viennasprenkel@hotmail.com";
+
+const form = document.getElementById("buyerForm");
+const errEl = document.getElementById("formErr");
+const btn = document.getElementById("submitBtn");
+
+function collect(){
+  const fd = new FormData(form), data = {};
+  for (const [k,v] of fd.entries()){
+    if (data[k]) data[k] = [].concat(data[k], v); else data[k] = v;
+  }
+  if (Array.isArray(data.contingencies)) data.contingencies = data.contingencies.join(", ");
+  data.consent = form.consent.checked ? "Yes" : "No";
+  data._template = "table";
+  data._cc = "vienna.sprenkel@dreamteam.homes";
+  data._replyto = data.email || "";
+  data._subject = "New buyer: " + (data.address || "home") + " — " + (data.name || "");
+  return data;
+}
+
+const LABELS = {name:"Buyer",coBuyer:"Co-buyer",email:"Email",phone:"Phone",contactPref:"Contact by",address:"Address",city:"City",zip:"ZIP",mls:"MLS #",listPrice:"List price",offer:"Offer",earnest:"Earnest money",closing:"Closing",timeline:"Timeline",contingencies:"Contingencies",loanType:"Paying with",down:"Down payment",preapproved:"Pre-approved",lender:"Lender",seen:"Seen it",otherAgent:"Other agent",notes:"Notes"};
+const MONEY = ["listPrice","offer","earnest"];
+
+function showDone(data, preview){
+  const dl = document.getElementById("summary");
+  dl.replaceChildren();
+  for (const k in LABELS){
+    let v = data[k]; if (!v) continue;
+    if (MONEY.includes(k)) v = "$" + v;
+    const dt = document.createElement("dt"); dt.textContent = LABELS[k];
+    const dd = document.createElement("dd"); dd.textContent = v;
+    dl.append(dt, dd);
+  }
+  if (preview){
+    document.getElementById("doneTitle").textContent = "Preview: this is what you'd receive.";
+    document.getElementById("doneMsg").textContent = "No form endpoint is set yet, so nothing was sent. Add one at the top of the script to start receiving submissions.";
+  }
+  form.hidden = true;
+  document.getElementById("done").hidden = false;
+  document.getElementById("done").scrollIntoView({behavior:"smooth",block:"start"});
+}
+
+form.addEventListener("submit", async (e) => {
+  e.preventDefault();
+  errEl.textContent = "";
+  let firstBad = null;
+  form.querySelectorAll("[required]").forEach(el => {
+    const bad = el.type === "checkbox" ? !el.checked : !el.value.trim() || !el.checkValidity();
+    el.classList.toggle("invalid", bad);
+    if (bad && !firstBad) firstBad = el;
+  });
+  if (firstBad){
+    errEl.textContent = "Please fill in the highlighted fields.";
+    firstBad.focus();
+    return;
+  }
+  const data = collect();
+  if (!FORM_ENDPOINT){ showDone(data, true); return; }
+  btn.disabled = true; btn.textContent = "Sending…";
+  try{
+    const res = await fetch(FORM_ENDPOINT, {method:"POST", headers:{"Content-Type":"application/json","Accept":"application/json"}, body:JSON.stringify(data)});
+    if (!res.ok) throw new Error(res.status);
+    showDone(data, false);
+  }catch(err){
+    errEl.textContent = "That didn't go through. Check your connection and try again, or call or text Vienna directly.";
+  }finally{
+    btn.disabled = false; btn.textContent = "Send to Vienna";
+  }
+});
+
+form.addEventListener("input", e => e.target.classList.remove("invalid"));
+</script>
+</body>
+</html>
