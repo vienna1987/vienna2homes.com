@@ -221,9 +221,11 @@
   nav.primary {
     display: flex;
     align-items: center;
-    gap: 24px;
+    flex-wrap: wrap;
+    gap: 10px 24px;
     font-size: 0.88rem;
-    order: 2;
+    order: 3;
+    width: 100%;
   }
   nav.primary a {
     text-decoration: none;
@@ -234,12 +236,13 @@
     border-bottom: 2px solid transparent;
   }
   nav.primary a:hover { opacity: 1; }
+  nav.primary .nav-break { flex-basis: 100%; height: 0; }
   nav.primary a.active {
     opacity: 1;
     font-weight: 600;
     border-bottom-color: var(--red);
   }
-  .header-cta { order: 3; }
+  .header-cta { order: 2; }
   .btn {
     display: inline-flex;
     align-items: center;
@@ -376,6 +379,15 @@
     transition: box-shadow 0.15s ease;
   }
   .explore-card:hover { box-shadow: 0 8px 24px rgba(0,0,0,0.08); }
+  /* Featured listings */
+  .listing-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 24px; }
+  .listing-card { padding: 0; overflow: hidden; }
+  .listing-card .photo { aspect-ratio: 3 / 2; background: var(--line); overflow: hidden; }
+  .listing-card .photo img { width: 100%; height: 100%; object-fit: cover; display: block; }
+  .listing-card .body { padding: 22px 26px 26px; }
+  .listing-card .more { display: inline-block; margin-top: 12px; font-weight: 600; color: var(--ink); }
+  .listings-all { margin-top: 28px; }
+  @media (max-width: 760px) { .listing-grid { grid-template-columns: 1fr; } }
   .explore-card .eyebrow { display: block; margin-bottom: 10px; }
   .explore-card h3 {
     font-size: 1.15rem;
@@ -736,8 +748,7 @@
     nav.primary {
       order: 3;
       width: 100%;
-      overflow-x: auto;
-      gap: 18px;
+      gap: 10px 18px;
       padding-top: 10px;
       border-top: 1px solid var(--line);
       -webkit-overflow-scrolling: touch;
@@ -769,11 +780,15 @@
       <a href="index.html" class="active">Home</a>
       <a href="about-me.html">About Me</a>
       <a href="buyers.html">Buyers</a>
-      <a href="buyer-intake-form.html" style="display:inline-block;background:#24533f;color:#ffffff;padding:12px 22px;border-radius:6px;font-weight:600;text-decoration:none;margin:12px 0;">Found a home? Start your offer</a>
-<a href="seller-cma-form.html" style="display:inline-block;background:#24533f;color:#ffffff;padding:12px 22px;border-radius:6px;font-weight:600;text-decoration:none;margin:12px 0;">What's my home worth? Free CMA</a>
       <a href="sellers.html">Sellers</a>
+      <a href="current-listings.html">Current Listings</a>
+      <a href="https://www.homesinpacificnorthwest.com/" target="_blank" rel="noopener">View Homes</a>
       <a href="repair-negotiation.html">Repair Negotiation &amp; Contractors</a>
       <a href="winning-team.html">Winning Team</a>
+      <span class="nav-break" aria-hidden="true"></span>
+      <a href="reviews.html">Client Reviews</a>
+      <a href="buyer-intake-form.html">Found a home? Start your offer</a>
+      <a href="seller-cma-form.html">What's my home worth? Free CMA</a>
     </nav>
     <a class="btn btn-red header-cta" href="tel:5092902069">Call (509) 290-2069</a>
   </div>
@@ -808,6 +823,34 @@
       </div>
     </div>
   </div>
+
+  <section class="block" id="listings">
+    <div class="wrap">
+      <div class="section-head">
+        <div class="eyebrow">Featured Listings</div>
+        <h2>Homes Vienna is representing now.</h2>
+      </div>
+      <div class="listing-grid">
+        <a class="explore-card listing-card" href="https://jonesmediapnw.aryeo.com/sites/6806-w-johannsen-ave-nine-mile-falls-wa-99026-26940333/branded" target="_blank" rel="noopener">
+          <div class="photo"><img src="images/johannsen-front.jpg" alt="6806 W Johannsen Ave, Nine Mile Falls, WA 99026" loading="lazy" onerror="this.remove()"></div>
+          <div class="body">
+            <span class="eyebrow">Nine Mile Falls, WA 99026</span>
+            <h3>6806 W Johannsen Ave</h3>
+            <span class="more">View photos &amp; details &rarr;</span>
+          </div>
+        </a>
+        <a class="explore-card listing-card" href="https://jonesmediapnw.aryeo.com/sites/20710-e-gilbert-rd-otis-orchards-east-farms-wa-99027-27459019/branded" target="_blank" rel="noopener">
+          <div class="photo"><img src="images/gilbert-front.jpg" alt="20710 E Gilbert Rd, Otis Orchards, WA 99027" loading="lazy" onerror="this.remove()"></div>
+          <div class="body">
+            <span class="eyebrow">Otis Orchards, WA 99027</span>
+            <h3>20710 E Gilbert Rd</h3>
+            <span class="more">View photos &amp; details &rarr;</span>
+          </div>
+        </a>
+      </div>
+      <div class="listings-all"><a class="btn btn-red" href="https://www.homesinpacificnorthwest.com/" target="_blank" rel="noopener">Search all Spokane-area homes</a></div>
+    </div>
+  </section>
 
   <section class="block">
     <div class="wrap">
