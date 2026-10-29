@@ -35,7 +35,7 @@
   .hero p { color: var(--muted); max-width: 620px; margin: 0 auto; }
 
   /* Summary */
-  .summary { display: flex; justify-content: center; align-items: center; gap: 28px; flex-wrap: wrap; background: var(--card); border: 1px solid var(--border); border-radius: var(--radius); padding: 24px; margin: 24px auto 40px; max-width: 640px; }
+  .summary { display: flex; justify-content: center; align-items: center; gap: 28px; flex-wrap: wrap; background: var(--card); border: 1px solid var(--border); border-radius: var(--radius); padding: 24px; margin: 24px auto 40px; max-width: 820px; }
   .avg { font-family: Fraunces, serif; font-size: 3rem; color: var(--brand); line-height: 1; }
   .stars { color: var(--accent); letter-spacing: 2px; font-size: 1.25rem; }
   .stars .off { color: var(--border); }
@@ -69,6 +69,8 @@
   /* Form */
   .form-section { background: var(--card); border: 1px solid var(--border); border-radius: var(--radius); padding: 32px; margin: 0 auto 64px; max-width: 720px; scroll-margin-top: 20px; }
   .form-section > p { color: var(--muted); margin-top: 0; }
+  .form-section > p.partner-note { background: #f1ece2; color: var(--text); border-radius: 10px; padding: 12px 16px; font-size: .95rem; }
+  .summary .btn-outline { padding: 10px 22px; }
   .field { margin-bottom: 18px; }
   .row { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; }
   label, legend { display: block; font-weight: 600; margin-bottom: 6px; font-size: .95rem; }
@@ -193,8 +195,8 @@
 
 <main>
   <section class="hero wrap">
-    <h1>What Clients Are Saying</h1>
-    <p>Honest feedback from buyers, sellers, and renters I've had the privilege of working with across Spokane and the Inland Northwest.</p>
+    <h1>What Clients &amp; Partners Are Saying</h1>
+    <p>Honest feedback from the buyers, sellers, and renters I've had the privilege of working with across Spokane and the Inland Northwest, and from the lenders, insurance agents, title reps, and fellow agents I work alongside.</p>
   </section>
 
   <div class="wrap">
@@ -204,7 +206,8 @@
         <div class="stars" id="avgStars" aria-hidden="true"></div>
         <div class="count" id="count"></div>
       </div>
-      <a class="btn" href="#leave-review">Leave a Review</a>
+      <a class="btn" href="#leave-review" data-mode="client">Leave a Review</a>
+      <a class="btn btn-outline" href="#leave-review" data-mode="partner">Industry Partner Review</a>
     </div>
 
     <div class="filters" role="group" aria-label="Filter reviews" id="filters">
@@ -213,6 +216,7 @@
       <button class="chip" aria-pressed="false" data-filter="Seller">Sellers</button>
       <button class="chip" aria-pressed="false" data-filter="Buyer &amp; Seller">Buyer &amp; Seller</button>
       <button class="chip" aria-pressed="false" data-filter="Renter / Landlord">Rental</button>
+      <button class="chip" aria-pressed="false" data-filter="partners">Industry Partners</button>
     </div>
 
     <div class="grid" id="reviewGrid" aria-live="polite"></div>
@@ -226,7 +230,8 @@
 
     <section class="form-section" id="leave-review">
       <h2>Share Your Experience</h2>
-      <p>Thank you for taking a minute. Every review is read personally and posted after a quick check that it's from a real client.</p>
+      <p>Thank you for taking a minute. Every review is read personally and posted after a quick check that it's from a real client or partner.</p>
+      <p class="partner-note"><strong>Lender, insurance agent, title rep, or agent from the other side of a deal?</strong> I'd love your feedback too. Just pick your role below.</p>
 
       <form id="reviewForm" novalidate>
         <div class="field" id="f-rating">
@@ -262,16 +267,28 @@
             <label for="type">I worked with Vienna as a…</label>
             <select id="type" name="type">
               <option value="">Select one</option>
-              <option>Buyer</option>
-              <option>Seller</option>
-              <option>Buyer &amp; Seller</option>
-              <option>Renter / Landlord</option>
+              <optgroup label="Client">
+                <option>Buyer</option>
+                <option>Seller</option>
+                <option>Buyer &amp; Seller</option>
+                <option>Renter / Landlord</option>
+              </optgroup>
+              <optgroup label="Industry partner">
+                <option>Lender</option>
+                <option>Insurance Agent</option>
+                <option>Title / Escrow Rep</option>
+                <option value="Cooperating Agent">Agent on the other side of the deal</option>
+              </optgroup>
             </select>
             <div class="err">Please choose one.</div>
           </div>
-          <div class="field">
+          <div class="field" id="f-area">
             <label for="area">Neighborhood or city <span class="opt">(optional)</span></label>
             <input type="text" id="area" name="area" maxlength="60" placeholder="e.g. South Hill">
+          </div>
+          <div class="field" id="f-company" hidden>
+            <label for="company">Company or brokerage <span class="opt">(optional)</span></label>
+            <input type="text" id="company" name="company" maxlength="80" placeholder="e.g. Inland Title">
           </div>
         </div>
 
@@ -283,7 +300,7 @@
         </div>
 
         <div class="field" id="f-consent">
-          <label class="check"><input type="checkbox" id="consent" name="consent"> I'm a real client of Vienna's, and I'm OK with my first name, last initial, and review being shown on this website.</label>
+          <label class="check"><input type="checkbox" id="consent" name="consent"> I'm a real client or industry partner of Vienna's, and I'm OK with my first name, last initial, and review being shown on this website.</label>
           <div class="err">Please confirm to submit.</div>
         </div>
 
@@ -327,6 +344,8 @@ const FALLBACK_EMAIL = "vienna.sprenkel@dreamteam.homes";
 //    When a real review comes in and you want it posted, copy it in here.
 //    Example of the format (delete the // to use):
 //    { name: "Jane D.", rating: 5, type: "Buyer", area: "South Hill", date: "2026-10-15", text: "Their actual words..." },
+//    Industry partner example (type can be Lender, Insurance Agent, Title / Escrow Rep, or Cooperating Agent):
+//    { name: "Sam K.", rating: 5, type: "Lender", company: "ABC Home Loans", date: "2026-10-20", text: "Their actual words..." },
 const REVIEWS = [
   { name: "Wyatt E.", rating: 5, type: "Buyer", area: "South Hill", date: "2026-10-28", text: "Six stars if we could! We couldn’t have asked for a better experience buying our home! From start to finish, the entire process was smooth, stress-free, and exciting. We always felt supported, informed, and confident every step of the way.\n\nBuying a home is such a huge milestone, and having someone who genuinely cares about you and your family makes all the difference. We’re beyond grateful for all the hard work, patience, and dedication that went into helping us find our home.\n\nNot only are we thankful to have had such an amazing realtor, but we’re also lucky to call them a friend. We absolutely love our home and couldn’t be happier! We highly recommend them to anyone looking to buy or sell! She also helped me propose to my wife the day of the key handoff!" },
 ];
@@ -341,6 +360,8 @@ const PLATFORMS = [
 
 /* ========================================================= */
 
+const PARTNER_TYPES = ["Lender", "Insurance Agent", "Title / Escrow Rep", "Cooperating Agent"];
+const isPartner = () => PARTNER_TYPES.includes(document.getElementById("type").value);
 const PAGE_SIZE = 6;
 let filter = "all", shown = PAGE_SIZE;
 
@@ -368,7 +389,7 @@ function renderSummary() {
 
 function renderReviews() {
   const list = REVIEWS
-    .filter(r => filter === "all" || r.type === filter)
+    .filter(r => filter === "all" || (filter === "partners" ? PARTNER_TYPES.includes(r.type) : r.type === filter))
     .sort((a, b) => (b.date || "").localeCompare(a.date || ""));
   const grid = $("reviewGrid");
 
@@ -388,7 +409,7 @@ function renderReviews() {
       <div class="meta">
         <div>
           <div class="name">${esc(r.name)}</div>
-          <div class="date">${esc([r.area, fmtDate(r.date)].filter(Boolean).join(" · "))}</div>
+          <div class="date">${esc([r.company || r.area, fmtDate(r.date)].filter(Boolean).join(" · "))}</div>
         </div>
         ${r.type ? `<span class="tag">${esc(r.type)}</span>` : ""}
       </div>
@@ -450,14 +471,15 @@ $("reviewForm").addEventListener("submit", async e => {
     name: $("name").value.trim(),
     email: $("email").value.trim(),
     type: $("type").value,
-    area: $("area").value.trim(),
+    area: isPartner() ? "" : $("area").value.trim(),
+    company: isPartner() ? $("company").value.trim() : "",
     review: $("review").value.trim(),
     consent: "Yes",
     submitted: new Date().toLocaleString()
   };
 
   if (!FORM_ENDPOINT) {
-    const body = `New website review\n\nRating: ${data.rating}/5\nName: ${data.name}\nEmail: ${data.email}\nWorked together as: ${data.type}\nArea: ${data.area || "-"}\n\nReview:\n${data.review}\n\nConsent to display: Yes`;
+    const body = `New website review\n\nRating: ${data.rating}/5\nName: ${data.name}\nEmail: ${data.email}\nWorked together as: ${data.type}\n${isPartner() ? "Company: " + (data.company || "-") : "Area: " + (data.area || "-")}\n\nReview:\n${data.review}\n\nConsent to display: Yes`;
     location.href = `mailto:${FALLBACK_EMAIL}?subject=${encodeURIComponent("New review from " + data.name)}&body=${encodeURIComponent(body)}`;
     showStatus("Your email app should open with your review filled in — just hit send. Thank you!", true);
     return;
@@ -483,6 +505,18 @@ $("reviewForm").addEventListener("submit", async e => {
 });
 
 $("yr").textContent = new Date().getFullYear();
+function syncRole() {
+  const partner = isPartner();
+  $("f-area").hidden = partner;
+  $("f-company").hidden = !partner;
+  $("review").placeholder = partner
+    ? "What's it like working with Vienna on a transaction? Communication, organization, getting to closing…"
+    : "What was it like working together? What stood out?";
+}
+$("type").addEventListener("change", syncRole);
+document.querySelectorAll("[data-mode]").forEach(a => a.addEventListener("click", () => {
+  if (a.dataset.mode === "partner" && !isPartner()) { $("type").value = ""; setTimeout(() => $("type").focus(), 400); }
+}));
 renderSummary(); renderReviews(); renderPlatforms();
 </script>
 </body>
